@@ -1757,8 +1757,10 @@ cont:
 		}
 
 		list_add(&page->lru, &page_list);
+#ifdef CONFIG_OPLUS_SYSTEM_KERNEL_QCOM
 		inc_node_page_state(page, NR_ISOLATED_ANON +
 				page_is_file_cache(page));
+#endif
 		isolated++;
 		if (isolated >= SWAP_CLUSTER_MAX)
 			break;

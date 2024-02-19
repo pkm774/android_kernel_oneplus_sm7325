@@ -214,6 +214,11 @@ enum zone_stat_item {
 	NR_ZSPAGES,		/* allocated in zsmalloc */
 #endif
 	NR_FREE_CMA_PAGES,
+#ifdef OPLUS_FEATURE_HEALTHINFO
+#ifdef CONFIG_OPLUS_HEALTHINFO
+        NR_IONCACHE_PAGES,
+#endif
+#endif /* OPLUS_FEATURE_HEALTHINFO */
 	NR_VM_ZONE_STAT_ITEMS };
 
 enum node_stat_item {
@@ -335,10 +340,17 @@ enum zone_watermarks {
 	NR_WMARK
 };
 
+#ifndef OPLUS_FEATURE_PERFORMANCE
 #define min_wmark_pages(z) (z->_watermark[WMARK_MIN] + z->watermark_boost)
 #define low_wmark_pages(z) (z->_watermark[WMARK_LOW] + z->watermark_boost)
 #define high_wmark_pages(z) (z->_watermark[WMARK_HIGH] + z->watermark_boost)
 #define wmark_pages(z, i) (z->_watermark[i] + z->watermark_boost)
+#else
+#define min_wmark_pages(z) (z->_watermark[WMARK_MIN] + z->watermark_boost/2)
+#define low_wmark_pages(z) (z->_watermark[WMARK_LOW] + z->watermark_boost/2)
+#define high_wmark_pages(z) (z->_watermark[WMARK_HIGH] + z->watermark_boost)
+#define wmark_pages(z, i) (z->_watermark[i] + (((i) == WMARK_HIGH) ? (z->watermark_boost) : (z->watermark_boost / 2)))
+#endif
 
 struct per_cpu_pages {
 	int count;		/* number of pages in the list */
